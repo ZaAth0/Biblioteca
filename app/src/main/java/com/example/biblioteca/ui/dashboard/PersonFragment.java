@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.biblioteca.databinding.FragmentPersonBinding;
-
 
 public class PersonFragment extends Fragment {
 
@@ -25,8 +24,8 @@ public class PersonFragment extends Fragment {
         binding = FragmentPersonBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        perfilVista.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final ImageView imageView = binding.imageView2;
+        perfilVista.getImageResource().observe(getViewLifecycleOwner(), imageView::setImageResource);
         return root;
     }
 

@@ -4,16 +4,17 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class PerfilVista extends ViewModel {
+import com.example.biblioteca.R;
 
-    private final MutableLiveData<String> mText;
+public class PerfilVista extends ViewModel {
+    private final MutableLiveData<Integer> imageResource;
 
     public PerfilVista() {
-        mText = new MutableLiveData<>();
-        mText.setValue("Vista de su perfil");
+        imageResource = new MutableLiveData<>();
+        imageResource.setValue(R.drawable.baseline_sentiment_very_satisfied_24);
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<Integer> getImageResource() {
+        return imageResource;
     }
 }
