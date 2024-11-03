@@ -9,7 +9,7 @@ public class BusquedaVista extends ViewModel {
 
     public BusquedaVista() {
         mText = new MutableLiveData<>();
-        mText.setValue("Vista de su busqueda");
+        mText.setValue("Buscar Libros");
     }
 
     public LiveData<String> getText() {

@@ -23,7 +23,7 @@ public class AddFragment extends Fragment {
         binding = FragmentAddBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textAdd;
+        final TextView textView = binding.textAdd; //Muestra el texto
         addViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         return root;
