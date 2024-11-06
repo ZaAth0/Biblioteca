@@ -29,5 +29,8 @@ public interface BookDao {
     // Método para eliminar un libro
     @Delete
     void delete(Book book);
+
+    @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
+    Book getBookById(int id);
 }
 
