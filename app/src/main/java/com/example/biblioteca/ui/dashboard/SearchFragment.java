@@ -1,10 +1,13 @@
 package com.example.biblioteca.ui.dashboard;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,6 +19,8 @@ import com.example.biblioteca.databinding.FragmentSearchBinding;
 import com.example.biblioteca.db.AppDatabase;
 import com.example.biblioteca.db.Book;
 import com.example.biblioteca.db.BookDao;
+import com.example.biblioteca.ui.BookDetailsDialogFragment;
+import com.example.biblioteca.ui.EditBookActivity;
 import com.example.biblioteca.ui.adapters.BookAdapter;
 
 import java.util.ArrayList;
@@ -26,6 +31,9 @@ public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
     private BookAdapter bookAdapter;
     private List<Book> bookList;
+
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -39,16 +47,33 @@ public class SearchFragment extends Fragment {
             @Override
             public void onEditClick(Book book) {
                 // Manejar clic en editar
+
+                Intent intent = new Intent(getContext(), EditBookActivity.class);
+                intent.putExtra("book_id", book.getId()); // Envía el ID del libro para cargar sus datos
+                startActivity(intent);
+
             }
 
             @Override
             public void onDeleteClick(Book book) {
                 // Manejar clic en eliminar
+                new Thread(() -> {
+                    AppDatabase db = AppDatabase.getDatabase(getContext());
+                    db.bookDao().delete(book);
+
+                    getActivity().runOnUiThread(() -> {
+                        bookList.remove(book);
+                        bookAdapter.notifyDataSetChanged();
+                    });
+                }).start();
             }
 
             @Override
             public void onDetailsClick(Book book) {
                 // Manejar clic en detalles
+
+                BookDetailsDialogFragment dialogFragment = BookDetailsDialogFragment.newInstance(book);
+                dialogFragment.show(getChildFragmentManager(), "BookDetailsDialog");
             }
         });
 
@@ -107,12 +132,11 @@ public class SearchFragment extends Fragment {
         BookDao bookDao = db.bookDao();
 
         // Cargar los libros que coinciden con la búsqueda
-        new Thread(() -> {
-            List<Book> filteredBooks = bookDao.getAllBooks().getValue(); // Obtén los libros en vivo
+        bookDao.getAllBooks().observe(getViewLifecycleOwner(), books -> {
             List<Book> results = new ArrayList<>();
 
-            if (filteredBooks != null) {
-                for (Book book : filteredBooks) {
+            if (books != null) {
+                for (Book book : books) {
                     if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
                         results.add(book);
                     }
@@ -120,12 +144,12 @@ public class SearchFragment extends Fragment {
             }
 
             // Actualizar el adaptador con los resultados filtrados
-            getActivity().runOnUiThread(() -> {
+
                 bookList.clear();
                 bookList.addAll(results);
                 bookAdapter.notifyDataSetChanged();
-            });
-        }).start();
+
+        });
     }
 
     @Override
